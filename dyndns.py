@@ -76,7 +76,7 @@ class DynDNS:
 			}
 		)
 		req = urllib2.Request('SERVER / PATH...', data) #TODO
-		self.last_server_response = self.get_opener().open(req).read()
+		self.do_request(req)
 
 
 if __name__ == '__main__':
