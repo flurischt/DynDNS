@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import time, random, cookielib, urllib2, urllib
+import requests
 from bs4 import BeautifulSoup
 
 OPEN_URL = 'O'
@@ -12,7 +13,7 @@ EXEC_METHOD = 'E'
 # 	O=directly open the url
 # 	F=find the link identified by 'WHAT' (in the last requests response) and open it
 URLS = (
-	(OPEN_URL, 'https://account.dyn.com/entrance/'),
+	(OPEN_URL, 'https://account.dyn.com/'),
 	(EXEC_METHOD, 'authenticate'),
 	(FIND_LINK, 'My Hosts'),
 	(FIND_LINK, 'Log Out'),
@@ -23,7 +24,13 @@ class DynDNS:
 		self.username = username
 		self.password = password
 		self.opener = None
-		self.last_server_response = str('')
+		self.last_server_response = u''
+
+		#init session
+		self.session = requests.Session()
+		self.session.headers.update(
+			{'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0'}
+		)
 
 	def login(self, verbose=False):
 		for (how, what) in URLS:
@@ -45,43 +52,48 @@ class DynDNS:
 			# let's be nice... or better hide that we're a script
 			time.sleep(random.randint(0,4))
 
-	def do_request(self, req_or_url):
-		self.last_server_response = self.get_opener().open(req_or_url).read()
+	def do_request(self, url):
+		self.last_server_response = self.session.get(url)
 
 	def open_link(self, linktext):
-		soup = BeautifulSoup(self.last_server_response)
+		soup = BeautifulSoup(self.last_server_response.text)
 		print soup('a', text=linktext)
 
-	def get_opener(self):
-		if self.opener:
-			return self.opener
-
-		cj = cookielib.CookieJar()
-		self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-		self.opener.addheaders = [
-			('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0'),
-		]
-		return self.opener
-
 	def authenticate(self, ):
-		raise Exception("Not fully implemented yet")
-		soup = BeautifulSoup(self.last_server_response)
-		data = urllib.urlencode(
-			{
+		data = {
 			'username' : self.username,
 			'password' : self.password,
 			'submit' : 'Log in',
-			'iov_id' : '', #TODO...
-			'multiform' : soup('input', {'name' : 'multiform'})[0]['value']
-			}
-		)
-		req = urllib2.Request('SERVER / PATH...', data) #TODO
-		self.do_request(req)
+			'iov_id' : '', #not necessary
+			'multiform' : self._findMultiformID(),
+		}
+		self.last_server_response = self.session.post("https://account.dyn.com/",
+													  data=data,
+													  allow_redirects=True)
+		#print ('Login successful' if self.username in self.last_server_response.text else '')
 
+	
+	def _findMultiformID(self, ):
+		"""Helper method needed to find the
+		multiform element and return its value.
+
+		BS doesn't seem to find the multiform input-element
+		with soup.find(attrs={"name": "multiform"})
+		"""
+		multiform = ""
+		soup = BeautifulSoup(self.last_server_response.text)
+		form = soup.find('form')
+		for child in form.children:
+			try:
+				if u'multiform' in child.attrs.values():
+				   multiform = child.attrs['value']
+			except AttributeError:
+				pass
+		return multiform
 
 if __name__ == '__main__':
 	import argparse
-	parser = argparse.ArgumentParser(description='a script to login to your free DynDNS account to prevent it being deleted.')
+	parser = argparse.ArgumentParser(description='a script to login to your free DynDNS account to prevent it from being deleted.')
 	parser.add_argument('username')
 	parser.add_argument('password')
 	parser.add_argument('-v', action='store_true', help="verbose, show each step", default=False)
