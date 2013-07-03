@@ -74,7 +74,8 @@ class DynDNS:
 		if len(links) > 0:
 			self.do_request(self._buildUrl(links[0]['href']))
 		else:
-			raise Exception('link "%s" not found' % linktext)
+			self.success = False
+			#raise Exception('link "%s" not found' % linktext)
 
 	def authenticate(self, ):
 		data = {
