@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import time, random, cookielib, urllib2, urllib
+import time
+import random
 import requests
 from bs4 import BeautifulSoup
 
