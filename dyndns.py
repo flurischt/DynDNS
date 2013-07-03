@@ -86,8 +86,8 @@ class DynDNS:
 			'multiform' : self._findMultiformID(),
 		}
 		self.last_server_response = self.session.post(DYN_HOSTNAME,
-													  data=data,
-													  allow_redirects=True)
+			data=data,
+			allow_redirects=True)
 		self.success = ('Welcome&nbsp;<b>%s' % self.username) in self.last_server_response.text
 		if self.verbose:
 			print ('\tLogin successful' if self.success else '\tLogin failed')
