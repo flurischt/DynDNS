@@ -132,7 +132,7 @@ if __name__ == '__main__':
 	parser.add_argument('-v', action='store_true', help="verbose, show each step", default=False)
 	args = parser.parse_args()
 
-	DynDNS(args.username, args.password, args.v).login()
+	success = DynDNS(args.username, args.password, args.v).login()
 	if success:
 		sys.exit(0)
 	else:
