@@ -132,4 +132,8 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	DynDNS(args.username, args.password, args.v).login()
+	if success:
+		sys.exit(0)
+	else:
+		sys.exit(1)
 
