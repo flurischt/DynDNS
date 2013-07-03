@@ -3,6 +3,7 @@
 import time
 import random
 import requests
+import sys
 from bs4 import BeautifulSoup
 
 OPEN_URL = 'O'
@@ -86,7 +87,7 @@ class DynDNS:
 		self.last_server_response = self.session.post(DYN_HOSTNAME,
 													  data=data,
 													  allow_redirects=True)
-		self.success = if self.username in self.last_server_response.text
+		self.success = self.username in self.last_server_response.text
 		if self.verbose:
 			print ('\tLogin successful' if self.success else 'Login failed')
 
