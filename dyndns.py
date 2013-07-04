@@ -3,7 +3,6 @@
 import time
 import random
 import requests
-import sys
 from bs4 import BeautifulSoup
 
 OPEN_URL = 'O'
@@ -27,7 +26,6 @@ class DynDNS:
 	def __init__(self, username, password, verbose=False):
 		self.username = username
 		self.password = password
-		self.opener = None
 		self.last_server_response = u''
 		self.verbose = verbose
 		self.success = False
@@ -126,6 +124,7 @@ class DynDNS:
 
 if __name__ == '__main__':
 	import argparse
+	import sys
 	parser = argparse.ArgumentParser(description='a script to login to your free DynDNS account to prevent it from being deleted.')
 	parser.add_argument('username')
 	parser.add_argument('password')
