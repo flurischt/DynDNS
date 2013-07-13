@@ -135,6 +135,6 @@ if __name__ == '__main__':
 	if success:
 		sys.exit(0)
 	else:
-		sys.exit(1)
 		print('Login was not successfull!')
+		sys.exit(1)
 
