@@ -94,19 +94,12 @@ class DynDNS:
 	def _findMultiformID(self, ):
 		"""Helper method needed to find the
 		multiform element and return its value.
-
-		BS doesn't seem to find the multiform input-element
-		with soup.find(attrs={"name": "multiform"})
 		"""
 		multiform = ""
 		soup = BeautifulSoup(self.last_server_response.text)
-		form = soup.find('form')
-		for child in form.children:
-			try:
-				if u'multiform' in child.attrs.values():
-				   multiform = child.attrs['value']
-			except AttributeError:
-				pass
+		form_input = soup.find('input', attrs={'name' : 'multiform'})
+		if form_input:
+			multiform =  form_input['value']
 		return multiform
 
 	def _buildUrl(self, href):
