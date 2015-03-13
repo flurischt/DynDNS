@@ -1,3 +1,9 @@
+
+CODE NO LONGER MAINTAINED
+DynDNS stopped providing free accounts. 
+
+---
+
 A script to login to your free DynDNS account to prevent it from being
 deleted.
 
